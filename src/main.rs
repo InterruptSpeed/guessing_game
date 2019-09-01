@@ -5,14 +5,22 @@ use std::io;
 fn main() {
     println!("Guess the number!");
 
-    let secret_number = rand::thread_rng().gen_range(1, 101);
+    let min_num = 1;
+    let max_num = 100;
+
+    let secret_number = rand::thread_rng().gen_range(min_num, max_num + 1);
 
     let mut num_guesses: u32 = 0;
-    loop {
-        println!("Please input your guess.");
-        let mut guess = String::new();
 
-        num_guesses = num_guesses + 1;
+    let mut lower_bound = min_num;
+    let mut upper_bound = max_num;
+
+    loop {
+        println!(
+            "Please input your guess between {} and {}.",
+            lower_bound, upper_bound
+        );
+        let mut guess = String::new();
 
         io::stdin()
             .read_line(&mut guess)
@@ -23,11 +31,24 @@ fn main() {
             Err(_) => continue,
         };
 
+        // increment number of guesses after validating input
+        num_guesses = num_guesses + 1;
+
         println!("You guessed: {}", guess);
 
         match guess.cmp(&secret_number) {
-            Ordering::Less => println!("Too small!"),
-            Ordering::Greater => println!("Too big!"),
+            Ordering::Less => {
+                println!("Too small!");
+                if lower_bound < guess {
+                    lower_bound = guess + 1;
+                }
+            }
+            Ordering::Greater => {
+                println!("Too big!");
+                if upper_bound > guess {
+                    upper_bound = guess - 1;
+                }
+            }
             Ordering::Equal => {
                 println!("You win in {} guesses!", num_guesses);
                 break;
