@@ -39,20 +39,31 @@ fn main() {
         match guess.cmp(&secret_number) {
             Ordering::Less => {
                 println!("Too small!");
-                if lower_bound < guess {
+                if lower_bound <= guess {
                     lower_bound = guess + 1;
                 }
             }
             Ordering::Greater => {
                 println!("Too big!");
-                if upper_bound > guess {
+                if upper_bound >= guess {
                     upper_bound = guess - 1;
                 }
             }
             Ordering::Equal => {
-                println!("You win in {} guesses!", num_guesses);
+                println!(
+                    "Well done! It took you {} guesses to find the secret number {}.",
+                    num_guesses, secret_number
+                );
                 break;
             }
+        }
+
+        if upper_bound - lower_bound == 0 {
+            println!(
+                "Well done! It took you {} guesses to find the secret number {}.",
+                num_guesses, secret_number
+            );
+            break;
         }
     }
 }
